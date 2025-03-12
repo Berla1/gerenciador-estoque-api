@@ -1,5 +1,6 @@
 package com.br.gerenciamento_estoque.model;
 
+import com.br.gerenciamento_estoque.dto.ProdutoDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,17 @@ public class Produto {
     @ManyToOne
     @JoinColumn(name = "fornecedor_id", nullable = false)
     private Fornecedor fornecedor;
+
+    public Produto(){}
+
+    public Produto(ProdutoDTO produto) {
+        this.nome = produto.nome();
+        this.preco = produto.preco();
+        this.quantidade_estoque = produto.quantidade_estoque();
+        this.fabricante = produto.fabricante();
+        this.codigo_barras = produto.codigo_barras();
+        this.fornecedor = produto.fornecedor();
+    }
 
     public Long getId() {
         return id;
