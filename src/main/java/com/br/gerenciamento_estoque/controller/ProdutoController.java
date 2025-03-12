@@ -27,6 +27,16 @@ public class ProdutoController {
         return ResponseEntity.ok(produtos); // Retorna 200 OK com a lista de produtos
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Produto> getProdutoById(@PathVariable Long id) {
+        Optional<Produto> produtoEncontrado = produtoRepository.findById(id);
+        if (produtoEncontrado.isPresent()) {
+            return ResponseEntity.ok(produtoEncontrado.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping
     public ResponseEntity<Produto> cadastrarProduto(@RequestBody ProdutoDTO produtoDTO) {
         Produto novoProduto = new Produto(produtoDTO);
@@ -48,7 +58,6 @@ public class ProdutoController {
     public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO) {
         Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
-
         produto.setNome(produtoDTO.nome());
         produto.setPreco(produtoDTO.preco());
         produto.setQuantidade_estoque(produtoDTO.quantidade_estoque());
