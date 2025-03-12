@@ -4,6 +4,7 @@ import com.br.gerenciamento_estoque.dto.ProdutoDTO;
 import com.br.gerenciamento_estoque.model.Produto;
 import com.br.gerenciamento_estoque.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +18,31 @@ public class ProdutoController {
     @Autowired
     ProdutoRepository produtoRepository;
 
-    @GetMapping()
-    public List<Produto> getAllProdutos(){
-        return produtoRepository.findAll();
+    @GetMapping
+    public ResponseEntity<List<Produto>> getAllProdutos() {
+        List<Produto> produtos = produtoRepository.findAll();
+        if (produtos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Retorna 204 No Content se a lista estiver vazia
+        }
+        return ResponseEntity.ok(produtos); // Retorna 200 OK com a lista de produtos
     }
 
     @PostMapping
-    public void cadastrarProduto(@RequestBody ProdutoDTO produto){
-        Produto novoProduto = new Produto(produto);
-        produtoRepository.save(novoProduto);
+    public ResponseEntity<Produto> cadastrarProduto(@RequestBody ProdutoDTO produtoDTO) {
+        Produto novoProduto = new Produto(produtoDTO);
+        Produto produtoSalvo = produtoRepository.save(novoProduto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo); // Retorna 201 Created com o produto criado
     }
 
     @DeleteMapping("/{id}")
-    public void deleteProduto(@PathVariable Long id){
+    public ResponseEntity<Void> deleteProduto(@PathVariable Long id) {
+        if (!produtoRepository.existsById(id)) {
+            return ResponseEntity.notFound().build(); // Retorna 404 se o produto não existir
+        }
         produtoRepository.deleteById(id);
+        return ResponseEntity.noContent().build(); // Retorna 204 No Content após a exclusão
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Produto> atualizarProduto(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO) {
