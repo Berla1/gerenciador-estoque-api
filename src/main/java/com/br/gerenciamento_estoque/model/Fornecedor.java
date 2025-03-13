@@ -1,5 +1,6 @@
 package com.br.gerenciamento_estoque.model;
 
+import com.br.gerenciamento_estoque.dto.FornecedorDTO;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,14 @@ public class Fornecedor {
     private String telefone;
     @OneToMany(mappedBy = "fornecedor", cascade = CascadeType.ALL)
     private List<Produto> produtos = new ArrayList<>();
+
+    public Fornecedor(){}
+
+    public Fornecedor(FornecedorDTO fornecedor) {
+        this.nome = fornecedor.nome();
+        this.cnpj = fornecedor.cnpj();
+        this.telefone = fornecedor.telefone();
+    }
 
     public Long getId() {
         return id;
