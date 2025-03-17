@@ -1,8 +1,10 @@
 package com.br.gerenciamento_estoque.controller;
 
 import com.br.gerenciamento_estoque.dto.auth.AuthDTO;
+import com.br.gerenciamento_estoque.dto.auth.LoginResponseDTO;
 import com.br.gerenciamento_estoque.model.Usuario;
 import com.br.gerenciamento_estoque.repository.UsuarioRepository;
+import com.br.gerenciamento_estoque.service.TokenService;
 import org.hibernate.id.uuid.UuidGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +27,17 @@ public class AuthController {
     @Autowired
     private UsuarioRepository repository;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Validated AuthDTO login) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(login.login(), login.senha());
         var auth = this.manager.authenticate(usernamePassword);
 
-        return ResponseEntity.ok().build();
+        var token = tokenService.generateToken((Usuario) auth.getPrincipal());
+
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")

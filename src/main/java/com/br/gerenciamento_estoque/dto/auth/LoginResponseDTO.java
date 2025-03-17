@@ -1,4 +1,4 @@
 package com.br.gerenciamento_estoque.dto.auth;
 
-public record LoginResponseDTO() {
+public record LoginResponseDTO(String token) {
 }
