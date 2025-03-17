@@ -18,6 +18,13 @@ public class Usuario implements UserDetails {
     private String login;
     private String senha;
 
+    public Usuario(String login, String encryptedPassword) {
+        this.login = login;
+        this.senha = encryptedPassword;
+    }
+
+    public Usuario(){}
+
     public Long getId() {
         return id;
     }
